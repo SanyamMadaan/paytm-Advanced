@@ -1,0 +1,89 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id                   Int                @id @unique @default(autoincrement())
+    name                 String
+    username             String             @unique
+    password             String
+    email                String             @unique
+    Money                BigInt             @default(0)
+    createdAt            DateTime           @default(now())
+    phone                BigInt             @unique
+    updatedAt            DateTime           @updatedAt
+    userid               String             @unique
+    totalTransactionDone Int                @default(0)
+    totalnumberofSignin  Int                @default(0)
+    transaction_Pass     Transaction_Pass[]
+    FraudUser            Fraud_People?
+    donation             Donation[]
+    referralId           BigInt             @default(0)
+    totalRequests        Int                @default(0)
+
+    CreditScore Int @default(0)
+}
+
+model Transaction_Pass {
+    id              Int    @id @unique @default(autoincrement())
+    userId          String
+    user            User   @relation(fields: [userId], references: [userid], onDelete: Cascade)
+    transaction_Pin BigInt
+}
+
+
+model Donation {
+    id             Int      @unique @default(autoincrement())
+    donationId     String
+    senderId       String?
+    senderUsername String
+    DonatedMoney   BigInt
+    donation       User?    @relation(fields: [senderId], references: [userid], onDelete: SetNull)
+    message        String?
+    donatedAt      DateTime @default(now())
+}
+
+model Transaction {
+    id               Int      @id @unique @default(autoincrement())
+    trasanctionId    String   @unique
+    senderId         String
+    receiverId       String
+    senderUsername   String
+    receiverUsername String
+    amount           BigInt
+    TransactionAt    DateTime @default(now())
+    Comment          String?
+}
+
+
+model Admin {
+    id          Int      @id @unique @default(autoincrement())
+    name        String
+    username    String   @unique
+    password    String
+    email       String   @unique
+    adminId     String   @unique
+    phone       String   @unique
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    totalsignin Int      @default(0)
+}
+
+model Fraud_People {
+    id                   Int      @id @default(autoincrement())
+    user                 User     @relation(fields: [fraud_people_userid], references: [userid], onDelete: Cascade)
+    fraud_people_userid  String   @unique
+    reason               String
+    Total_Money          BigInt
+    username             String
+    createdAt            DateTime @default(now())
+    email                String
+    phone                BigInt
+    totalnumberofSignin  Int
+    totalTransactionDone Int
+}
